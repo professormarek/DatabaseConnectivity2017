@@ -33,7 +33,7 @@ public class DatabaseConnectivity {
         String databaseURI = "jdbc:mysql://localhost/biftest";
         //replace this info with your username and password as appropriate!
         String username = "bif";
-        String password = "biftest";
+        String password = "bifsecret";
 
         //SQL queries are represented as Strings in Java
         //note: you can compose these strings dynamically using the + operator
@@ -57,7 +57,10 @@ public class DatabaseConnectivity {
         boolean connected = false;
         System.out.println("Attempting to connect to database: " + databaseURI + " with username: " + username + " password: " + password);
         try{
+            //connect to database
             connection = DriverManager.getConnection(databaseURI, username, password);
+            //create a Statement that we will use to interact with the database
+            statement = connection.createStatement();
             connected = true;
         }catch (SQLException e){
             e.printStackTrace();
@@ -65,6 +68,16 @@ public class DatabaseConnectivity {
         }
         if(connected == true){
             System.out.println("succesfully connected to the database");
+        }
+
+        //test to see if the connection is working
+        //ex. insert a record into the patients table
+        System.out.println("inserting a row into the patients table");
+        try{
+            //recall we use executeUpdate (Rather than executeQuery) to modify the table
+            statement.executeUpdate(insertQuery);
+        } catch (SQLException e){
+            e.printStackTrace();
         }
 
     }
