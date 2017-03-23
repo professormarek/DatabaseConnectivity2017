@@ -54,6 +54,8 @@ public class DatabaseConnectivity {
         String insertQuery = "INSERT INTO patients VALUES (NULL, 'Marek', '1 Seneca way')";
         //update query
         String updateQuery = "UPDATE patients SET address = 'a van down by the river' WHERE name in('Marek')" ;
+        //query to delete certain records
+        String deleteQuery = "DELETE FROM patients WHERE address = 'a van down by the river' ";
 
         //let's connect to the database and execute queries
 
@@ -131,6 +133,14 @@ public class DatabaseConnectivity {
 
             //delete rows from the table
             System.out.println("Deleting rows from the table");
+            try{
+                statement.executeUpdate(deleteQuery);
+                //display the modified table
+                displayTable(statement,selectQuery);
+            } catch (SQLException e){
+                e.printStackTrace();
+            }
+
 
         }
 
