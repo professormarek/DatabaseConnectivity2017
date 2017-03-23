@@ -11,6 +11,9 @@ import java.sql.Statement;
  * get a reference to it through the class loader Class.forName("a class name")
  */
 public class DatabaseConnectivity {
+
+    //instance fields (are for persistent data.. we don't really have any here!)
+
     public static void main(String[] args){
         //before using the class loader make sure you include the appropriate JAR file (see notes)
         try{
@@ -49,6 +52,8 @@ public class DatabaseConnectivity {
         String selectQuery = "SELECT id, name, address FROM patients";
         //ex. a query to insert a record into the "patients" table.
         String insertQuery = "INSERT INTO patients VALUES (NULL, 'Marek', '1 Seneca way')";
+        //update query
+        String updateQuery = "UPDATE patients SET address = 'a van down by the river' WHERE name in('Marek')" ;
 
         //let's connect to the database and execute queries
 
@@ -92,29 +97,61 @@ public class DatabaseConnectivity {
                     //we could use a "Patient" class instead. (left as an exercise)
                     int id = resultSet.getInt("id");
                     String name = resultSet.getString("name");
-                    //try to get the address yourself
-
-                    //use System.out.println to display the row
-                    System.out.println("ID: " + id + " NAME: " + name);
+                    String address = resultSet.getString("address");
+                    //for now just display the row, but you could literally do anything with this data
+                    System.out.println("ID: " + id + " NAME: " + name + " ADDRESS: " + address);
                 }
             } catch (SQLException e){
                 e.printStackTrace();
             }
 
-            //test to see if the connection is working
-            //ex. insert a record into the patients table
+
+            //insert a record into the patients table
             System.out.println("inserting a row into the patients table");
             try{
                 //recall we use executeUpdate (Rather than executeQuery) to modify the table
                 statement.executeUpdate(insertQuery);
+                //display the update table
+                displayTable(statement, selectQuery);
             } catch (SQLException e){
                 e.printStackTrace();
             }
 
+            //update an exsting record in the database
+            System.out.println("Performing an update on the table");
+            try{
+                //perfrom the update (one line of code)
+                statement.executeUpdate(updateQuery);
+                //display the updated table...
+                displayTable(statement, selectQuery);
+
+            } catch (SQLException e){
+                e.printStackTrace();
+            }
+
+            //delete rows from the table
+            System.out.println("Deleting rows from the table");
+
         }
 
-
-
+    }
+    private static void displayTable(Statement statement, String query) throws SQLException{
+        ResultSet resultSet = statement.executeQuery(query);
+        /*
+        notice that next() will take us to the first record
+        and then each subsequent call will take us to the next record (as the name suggests)
+        will return 0 or false if there are no more records
+         */
+        while(resultSet.next()){
+            //demonstrate pulling individual fields out of the row
+            //here we use primitive variables to represent each field
+            //we could use a "Patient" class instead. (left as an exercise)
+            int id = resultSet.getInt("id");
+            String name = resultSet.getString("name");
+            String address = resultSet.getString("address");
+            //for now just display the row, but you could literally do anything with this data
+            System.out.println("ID: " + id + " NAME: " + name + " ADDRESS: " + address);
+        }
 
     }
 }
