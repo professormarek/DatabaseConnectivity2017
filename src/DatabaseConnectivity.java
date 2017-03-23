@@ -38,8 +38,15 @@ public class DatabaseConnectivity {
         //SQL queries are represented as Strings in Java
         //note: you can compose these strings dynamically using the + operator
 
+        /*
+        ex. a query to create a table (in this case the table we're using in the example)
+        try executing the table creation and deletion queires as an exercise
+        String createTable = "CREATE TABLE patients (id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, name VARCHAR(20), address VARCHAR(30)";
+        String dropTable = "DROP TABLE patients";
+         */
+
         //ex. a select query against the "patients" table
-        String query1 = "SELECT id, name, address FROM patients";
+        String selectQuery = "SELECT id, name, address FROM patients";
         //ex. a query to insert a record into the "patients" table.
         String insertQuery = "INSERT INTO patients VALUES (NULL, 'Marek', '1 Seneca way')";
 
@@ -68,17 +75,46 @@ public class DatabaseConnectivity {
         }
         if(connected == true){
             System.out.println("succesfully connected to the database");
+
+
+            //perform a SELECT query to access rows out of our patients table
+            System.out.println("Attempting to query records from the database");
+            try{
+                resultSet = statement.executeQuery(selectQuery);
+                /*
+                notice that next() will take us to the first record
+                and then each subsequent call will take us to the next record (as the name suggests)
+                will return 0 or false if there are no more records
+                 */
+                while(resultSet.next()){
+                    //demonstrate pulling individual fields out of the row
+                    //here we use primitive variables to represent each field
+                    //we could use a "Patient" class instead. (left as an exercise)
+                    int id = resultSet.getInt("id");
+                    String name = resultSet.getString("name");
+                    //try to get the address yourself
+
+                    //use System.out.println to display the row
+                    System.out.println("ID: " + id + " NAME: " + name);
+                }
+            } catch (SQLException e){
+                e.printStackTrace();
+            }
+
+            //test to see if the connection is working
+            //ex. insert a record into the patients table
+            System.out.println("inserting a row into the patients table");
+            try{
+                //recall we use executeUpdate (Rather than executeQuery) to modify the table
+                statement.executeUpdate(insertQuery);
+            } catch (SQLException e){
+                e.printStackTrace();
+            }
+
         }
 
-        //test to see if the connection is working
-        //ex. insert a record into the patients table
-        System.out.println("inserting a row into the patients table");
-        try{
-            //recall we use executeUpdate (Rather than executeQuery) to modify the table
-            statement.executeUpdate(insertQuery);
-        } catch (SQLException e){
-            e.printStackTrace();
-        }
+
+
 
     }
 }
